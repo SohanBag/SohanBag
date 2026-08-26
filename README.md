@@ -13,12 +13,20 @@ So most of what I build publicly is about catching that class of problem.
 
 ## What I'm working on
 
+Four repositories, and they compose into one pipeline: extract flow features, validate
+them, evaluate honestly, then attack the result.
+
 | Project | What it does |
 | --- | --- |
-| [**leakhunt**](https://github.com/SohanBag/leakhunt) | Finds data leakage and suspicious evaluation behaviour in ML pipelines. Model-free checks for CI, plus a diagnostic that measures what a leaky split is actually worth. Validated on UCI HAR: up to **36× tighter** confidence intervals under a leaky protocol, which is how you spot one. |
+| [**flowlens**](https://github.com/SohanBag/flowlens) | C++17 network flow feature extraction. Reads pcap directly, holds constant memory per flow, stays bounded under floods that open millions of one-packet flows. **185,000 pkt/s**, and capping the flow table made it *faster* because the table stays cache-resident. |
+| [**leakhunt**](https://github.com/SohanBag/leakhunt) | Finds data leakage and suspicious evaluation behaviour in ML pipelines. Validated on UCI HAR: a leaky protocol produced **36x tighter** confidence intervals, which is how you spot one. |
+| [**featureguard**](https://github.com/SohanBag/featureguard) | Catches schema breaks, NaNs and distribution drift before they reach a model. Schema validation costs **2.2 us regardless of batch size**; streaming drift runs in 879 KiB where raw history would need 57 MB. |
+| [**evade-nids**](https://github.com/SohanBag/evade-nids) | Leakage-free intrusion-detection benchmarking. A random split reports 0.999 F1 where holding out whole capture sessions gives 0.169. Adversarial attacks are constrained to be physically sendable; unconstrained ones overstate evasion by **36 points**. |
 
-Currently building `flowlens`, a C++17 network flow feature extractor, and a reproducible
-cross-dataset benchmark for ML-based intrusion detection.
+A theme runs through them. Each one exists because something fails quietly: a column
+order that changes without raising, a split that leaks, a NaN that propagates, an attack
+that works on a feature vector no packet sequence could produce. The interesting bugs are
+the ones that do not crash.
 
 ## Background
 
