@@ -28,11 +28,13 @@ order that changes without raising, a split that leaks, a NaN that propagates, a
 that works on a feature vector no packet sequence could produce. The interesting bugs are
 the ones that do not crash.
 
-The fifth comes from the other side of my work, where the failure is loud instead:
+Three more come from the systems and accelerator side of the work:
 
 | Project | What it does |
 | --- | --- |
 | [**spikefit**](https://github.com/SohanBag/spikefit) | Gradient checkpointing and VRAM auto-tuning for spiking neural networks. BPTT memory grows linearly with the simulation length `T`, which is exactly the knob that makes an SNN work; recomputing chunk interiors makes it `O(sqrt(T))` instead. **86.8% less peak memory** and **10x the batch size** at `T=256`, with gradients bit-identical to standard BPTT. |
+| [**edgeflow**](https://github.com/SohanBag/edgeflow) | Takes a PyTorch model to INT8 and measures what it cost. Two models of identical size: one loses nothing measurable, the other loses **25 accuracy points**. Finds the layer responsible by a **7,700x margin** in output MSE. Also found that INT8 ran **28% slower** than float32 at this model size, which a report showing only compression would have called a win. |
+| [**npudialect**](https://github.com/SohanBag/npudialect) | An out-of-tree **MLIR** dialect for an NPU with a software-managed scratchpad. Verifiers reject programs that are valid MLIR and wrong for the hardware, like compute reading DRAM instead of the scratchpad. Passes for elementwise fusion, budget-aware tile selection and DMA double buffering. |
 
 ## Background
 
