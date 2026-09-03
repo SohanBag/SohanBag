@@ -32,9 +32,11 @@ Three more come from the systems and accelerator side of the work:
 
 | Project | What it does |
 | --- | --- |
-| [**spikefit**](https://github.com/SohanBag/spikefit) | Gradient checkpointing and VRAM auto-tuning for spiking neural networks. BPTT memory grows linearly with the simulation length `T`, which is exactly the knob that makes an SNN work; recomputing chunk interiors makes it `O(sqrt(T))` instead. **86.8% less peak memory** and **10x the batch size** at `T=256`, with gradients bit-identical to standard BPTT. |
-| [**edgeflow**](https://github.com/SohanBag/edgeflow) | Takes a PyTorch model to INT8 and measures what it cost. Two models of identical size: one loses nothing measurable, the other loses **25 accuracy points**. Finds the layer responsible by a **7,700x margin** in output MSE. Also found that INT8 ran **28% slower** than float32 at this model size, which a report showing only compression would have called a win. |
+| [**spikekern**](https://github.com/SohanBag/spikekern) | Fused **Triton** kernels for spiking neuron dynamics. A LIF layer written the obvious way costs 1,280 kernel launches at `T=256`; fused, it costs two. **22x to 129x faster than snnTorch**, 22% less memory, with spike trains bit-identical and gradients matching to 2.9e-07. The first backward kernel was wrong by 0.94 relative while the forward was bit-exact, which is why it is checked against two independent implementations. |
+| [**edgeflow**](https://github.com/SohanBag/edgeflow) | Takes a PyTorch model to INT8 and measures what it cost. Found that the standard activation-outlier heuristic ranks a **real** CNN's layers in near-reverse order of actual damage, having scored a perfect +1.000 on the synthetic fixtures. Also that INT8 ran **2.5x slower** than float32, which a report showing only compression would have called a win. |
 | [**npudialect**](https://github.com/SohanBag/npudialect) | An out-of-tree **MLIR** dialect for an NPU with a software-managed scratchpad. Verifiers reject programs that are valid MLIR and wrong for the hardware, like compute reading DRAM instead of the scratchpad. Passes for elementwise fusion, budget-aware tile selection and DMA double buffering. |
+
+[**spikefit**](https://github.com/SohanBag/spikefit) sits alongside spikekern, attacking the same problem from the memory side with gradient checkpointing over the temporal dimension: **86.8% less peak memory** and **10x the batch size** at `T=256`, with gradients bit-identical to standard BPTT. The two compose.
 
 ## Background
 
